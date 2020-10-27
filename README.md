@@ -18,7 +18,7 @@ URL: https://github.com/Reference-LAPACK/lapack/archive/v3.9.0.tar.gz
 
 ### Install
 
-<script src="https://gist.github.com/tsano430/b9ee96c39937876a576da62e7f917f96.js"></script>
+URL: https://gist.github.com/tsano430/b9ee96c39937876a576da62e7f917f96
 
 [1]: https://ieeexplore.ieee.org/document/9010306
 [2]: http://www.netlib.org/lapack/lapacke.html
