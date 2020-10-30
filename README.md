@@ -1,6 +1,6 @@
 # alpha-nmf
 
-Implementation of "[A damped Newton algorithm for nonnegative matrix factorization based on alpha-divergence][1]"
+[WIP] Implementation of "[A damped Newton algorithm for nonnegative matrix factorization based on alpha-divergence][1]"
 
 Abstract
 --------
