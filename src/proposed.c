@@ -227,7 +227,7 @@ int proposed_solver(Matrix *X, Matrix *W_ret, Matrix *H_ret,int *flag,double alp
 		fp = fopen("logdata.csv","w");
 
 	// solve
-	for (rounds = 1; rounds <= 10000000; ++rounds){
+	for (rounds = 1; rounds <= IT_LIMITS; ++rounds){
 		_proposed_update(X,W,H,W_new,H_new,flag,alpha,eps,delta1,delta2);
 		
 		cblas_dcopy(W->row * W->col, W_new->data, 1, W->data, 1); 

@@ -266,7 +266,7 @@ int nt_solver(Matrix *X, Matrix *W_ret, Matrix *H_ret,int *flag,double alpha,
 	}
 
 	// solve
-	for (rounds = 1; rounds <= 10000000; ++rounds){
+	for (rounds = 1; rounds <= IT_LIMITS; ++rounds){
 		_nt_update(X,W,H,W_new,H_new,flag,alpha,eps,delta1,delta2);
 		
 		copy_matrix(W, W_new); copy_matrix(H, H_new);

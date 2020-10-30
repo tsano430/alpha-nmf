@@ -35,9 +35,8 @@ int main(void){
     delta1 = 10.0; 
     delta2 = 1.0;
 
-    alpha = -2.5;
     for (i = 0; i <= 25; ++i){
-        alpha += i * 0.2;
+        alpha = i * 0.2 - 2.5;
 
         X = create_matrix(M,N);
         W = create_matrix(M,K); 
@@ -64,25 +63,24 @@ int main(void){
         ret_orl[0][i] /= trial;
         ret_orl[1][i] /= trial;
         ret_orl[2][i] /= trial;
+        printf("%f\n", ret_orl[2][i]);
     }
     free_matrix(X); free_matrix(W); free_matrix(H);
 
     fp = fopen("./log/ret_orl.log", "w");
-    alpha = -2.5;
-    for (i = 0; i < 4; ++i){
+    for (i = 0; i <= 25; ++i){
+        alpha = i * 0.2 - 2.5;
+        if (i == 25)
+                fprintf(fp, "%.1f\n", alpha);
+            else
+                fprintf(fp, "%.1f,", alpha);
+    }
+    for (i = 0; i < 3; ++i){
         for (j = 0; j <= 25; ++j){
-            if (i == 0){
-                alpha += j * 0.2;
-                if (j == 25)
-                    fprintf(fp, "%.1f\n", alpha);
-                else
-                    fprintf(fp, "%.1f,", alpha);
-            }else{
-                if (j == 25)
-                    fprintf(fp, "%.6f\n", ret_orl[i][j]);
-                else
-                    fprintf(fp, "%.6f,", ret_orl[i][j]);
-            }
+            if (j == 25)
+                fprintf(fp, "%.6f\n", ret_orl[i][j]);
+            else
+                fprintf(fp, "%.6f,", ret_orl[i][j]);
         }
     }
     fclose(fp);
@@ -95,9 +93,8 @@ int main(void){
     delta1 = 1.0; 
     delta2 = 0.1;
 
-    alpha = -2.5;
     for (i = 0; i <= 25; ++i){
-        alpha += i * 0.2;
+        alpha = i * 0.2 - 2.5;
 
         X = create_matrix(M,N);
         W = create_matrix(M,K); 
@@ -128,21 +125,19 @@ int main(void){
     free_matrix(X); free_matrix(W); free_matrix(H);
 
     fp = fopen("./log/ret_cluto.log", "w");
-    alpha = -2.5;
+    for (i = 0; i <= 25; ++i){
+        alpha = i * 0.2 - 2.5;
+        if (i == 25)
+                fprintf(fp, "%.1f\n", alpha);
+            else
+                fprintf(fp, "%.1f,", alpha);
+    }
     for (i = 0; i < 3; ++i){
         for (j = 0; j <= 25; ++j){
-            if (i == 0){
-                alpha += j * 0.2;
-                if (j == 25)
-                    fprintf(fp, "%.1f\n", alpha);
-                else
-                    fprintf(fp, "%.1f,", alpha);
-            }else{
-                if (j == 25)
-                    fprintf(fp, "%.6f\n", ret_cluto[i][j]);
-                else
-                    fprintf(fp, "%.6f,", ret_cluto[i][j]);
-            }
+            if (j == 25)
+                fprintf(fp, "%.6f\n", ret_cluto[i][j]);
+            else
+                fprintf(fp, "%.6f,", ret_cluto[i][j]);
         }
     }
     fclose(fp);

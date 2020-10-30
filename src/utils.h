@@ -13,6 +13,7 @@
 #include <lapacke.h>
 
 #define MAX_LINE_SIZE 50000
+#define IT_LIMITS 100000
 
 /******************************************************************************
  * matrix structure

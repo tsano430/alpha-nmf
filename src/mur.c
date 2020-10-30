@@ -102,7 +102,7 @@ int mur_solver(Matrix *X, Matrix *W_ret, Matrix *H_ret, int *flag,double alpha,
 		base_t = clock();
 	}
 
-	for (rounds = 1; rounds <= 10000000; ++rounds){
+	for (rounds = 1; rounds <= IT_LIMITS; ++rounds){
 		_mur_update(X,W,H,W_new,H_new,alpha,eps);
 		
 		cblas_dcopy(W->row * W->col, W_new->data, 1, W->data, 1);
