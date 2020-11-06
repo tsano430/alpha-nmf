@@ -12,7 +12,7 @@
 
 int main(void){
 	char *fname[2] = {"../input/orl.csv", "../input/cluto_tr23.csv"};
-	int flag[2] = {1,0}, init_max = 10,rounds, M, N, K, i, j;
+	int flag[2] = {0,0}, init_max = 10,rounds, M, N, K, i, j;
 	double eps, delta1, delta2, alpha;
 	clock_t bef_time, aft_time;
 	Matrix *X,*W,*H;

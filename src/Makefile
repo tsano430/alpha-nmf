@@ -2,7 +2,8 @@
 
 CC = gcc
 OUTPUT = -o $@
-OPTION = -llapacke -lcblas -llapack -lblas -lm 
+#OPTION = -llapacke -lcblas -llapack -lblas -lm 
+OPTION = -llapacke -lcblas -llapack -lblas -lm -lgfortran
 OBJ_CC = $(CC) $^ -c
 
 all: simulation
