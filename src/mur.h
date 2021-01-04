@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 #include "utils.h"
 
 double _mur_update_W_ik(Matrix *X, Matrix *W, Matrix *H, double *WHT, int i, int k,double alpha);

@@ -63,7 +63,6 @@ int main(void){
         ret_orl[0][i] /= trial;
         ret_orl[1][i] /= trial;
         ret_orl[2][i] /= trial;
-        printf("%f\n", ret_orl[2][i]);
     }
     free_matrix(X); free_matrix(W); free_matrix(H);
 

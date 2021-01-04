@@ -1,5 +1,5 @@
 /******************************************************************************
- * mono.c -- Proposed Algorithm
+ * proposed.c -- Proposed algorithm
  ******************************************************************************/
 
 #include "proposed.h"
@@ -10,128 +10,119 @@ const double beta = 0.95;
 
 double _proposed_update_W_ik(Matrix *X,Matrix *W,Matrix *H,int i,int k,
 		double alpha,double eps,double delta1,double delta2){
-	int M = X->row, K = W->col, m = 1;
-	double diff1,diff2,diff1_n,dy;
-	double W_n_ik, W_ik, W_i_ik, d, y;
-	Matrix *W_n;
+	int M = X->row, K = W->col, p = 0;
+	double diff1,diff2,diff1_n;
+	double W_ik, Wn_ik, Wi_ik, Ws_ik, d;
+	Matrix *Wn;
 
-	// init
+	// Step 1
 	W_ik = W->data[i*K+k];
 	diff1 = alpha_div_diff1_W(X,W,H,i,k,alpha);
-	W_n = create_matrix(M,K);
-	cblas_dcopy(W->row * W->col,W->data,1,W_n->data,1);	
+	Wn = create_matrix(M,K);
+	cblas_dcopy(W->row * W->col,W->data,1,Wn->data,1);	
 
 	// stop condition for (i,k) element
 	if (diff1 > delta1 && W_ik < eps+delta2){
-		free_matrix(W_n);
+		free_matrix(Wn);
 		return W_ik;
 	}
 	else if (fabs(diff1) <= delta1){
-		free_matrix(W_n);
+		free_matrix(Wn);
 		return W_ik;
 	}
 
 	//printf("diff1: %f\n",diff1);
 
-	diff2 = alpha_div_diff2_W(X, W_n, H, i, k, alpha);
+	diff2 = alpha_div_diff2_W(X, Wn, H, i, k, alpha);
 
-	d = -diff1 / diff2; W_n_ik = W_ik + d;
+	d = -diff1 / diff2; 
+	Wn_ik = W_ik + d;
 
-	// linesearch to construct separating hyperplane
-	W_n->data[i * K + k] = W_n_ik;
-	diff1_n = alpha_div_diff1_W(X, W_n, H, i, k, alpha);
+	// Step 2
+	Wn->data[i * K + k] = Wn_ik;
+	diff1_n = alpha_div_diff1_W(X, Wn, H, i, k, alpha);
 
-	if (diff1_n * d <= 0.0){
-		y = W_n_ik;
+	if (diff1_n * diff1 >= 0.0){
+		free_matrix(Wn);
+		return fmax(eps,Wn_ik);
 	}else{
+		Wi_ik = W_ik - (Wn_ik - W_ik) / (diff1_n - diff1) * diff1;
+		d = fmax(d,eps - W_ik);
 		while (1){
-			y = W_ik + pow(beta,m) * d;
-			W_n->data[i * K + k] = y;
-			dy = alpha_div_diff1_W(X, W_n, H, i, k, alpha);
-
-			//printf("dy: %f\n",dy);
-
-			if (dy * d <= 0.0)
+			Wn->data[i * K + k] = W_ik + pow(beta,p) * d;
+			diff1_n = alpha_div_diff1_W(X, Wn, H, i, k, alpha);
+			if (alpha_div_diff1_W(X, Wn, H, i, k, alpha) * d <= 0.0) {
 				break;
-			m++;
+			}
+			p++;
 		}
+		free_matrix(Wn);
+		Ws_ik = W_ik + pow(beta,p) * d;
 	}
 
-	W_i_ik = W_ik - (W_n_ik - W_ik) / (diff1_n - diff1) * diff1;
-
-	if (d > 0.0 && m >= 1 && y < W_i_ik)
-		W_ik = W_i_ik;
-	else if (d < 0.0 && m >= 1 && y > W_i_ik)
-		W_ik = W_i_ik;
-	else
-		W_ik = y;
-	
-	// update W_ik
-	W_ik = fmax(eps,W_ik);
-
-	free_matrix(W_n);
-	return W_ik;
+	// Step 3
+	if (d > 0.0){
+		return fmax(Ws_ik,Wi_ik);
+	}else{
+		return fmax(eps,fmin(Ws_ik,Wi_ik));
+	}
 }
 
 double _proposed_update_H_jk(Matrix *X,Matrix *W,Matrix *H,int j,int k,
 		double alpha,double eps,double delta1,double delta2){
-	int N = X->col, K = W->col, m = 1;
-	double diff1,diff2,diff1_n,dy;
-	double H_n_jk,H_jk,H_i_jk,d,y;
-	Matrix *H_n;
+	int N = X->col, K = W->col, p = 0;
+	double diff1,diff2,diff1_n;
+	double H_jk, Hn_jk, Hi_jk, Hs_jk, d;
+	Matrix *Hn;
 
-	// init
+	// Step 1
 	H_jk = H->data[j*K+k];
 	diff1 = alpha_div_diff1_H(X,W,H,j,k,alpha);
-	H_n = create_matrix(N, K);
-	cblas_dcopy(H->row * H->col,H->data,1,H_n->data,1);
+	Hn = create_matrix(N, K);
+	cblas_dcopy(H->row * H->col,H->data,1,Hn->data,1);
 
 	if (diff1 > delta1 && H_jk < eps+delta2){
-		free_matrix(H_n);
+		free_matrix(Hn);
 		return H_jk;
 	}
 	else if (fabs(diff1) <= delta1){
-		free_matrix(H_n);
+		free_matrix(Hn);
 		return H_jk;
 	}
 
-	diff2 = alpha_div_diff2_H(X, W, H_n, j, k, alpha);
+	diff2 = alpha_div_diff2_H(X, W, Hn, j, k, alpha);
 
-	d = -diff1/diff2; H_n_jk = H_jk + d;
+	d = -diff1 / diff2; 
+	Hn_jk = H_jk + d;
 
-	// linesearch
-	H_n->data[j * K + k] = H_n_jk;
-	diff1_n = alpha_div_diff1_H(X, W, H_n, j, k, alpha);
-	
-	if (diff1_n * d <= 0.0){
-		y = H_n_jk;
+	// Step 2
+	Hn->data[j * K + k] = Hn_jk;
+	diff1_n = alpha_div_diff1_H(X, W, Hn, j, k, alpha);
+
+	if (diff1_n * diff1 >= 0.0){
+		free_matrix(Hn);
+		return fmax(eps,Hn_jk);
 	}else{
+		Hi_jk = H_jk - (Hn_jk - H_jk) / (diff1_n - diff1) * diff1;
+		d = fmax(d,eps - H_jk);
 		while (1){
-			y = H_jk + pow(beta,m) * d;
-			H_n->data[j * K + k] = y;
-			dy = alpha_div_diff1_H(X, W, H_n, j, k, alpha);
-
-			if (dy * d <= 0.0)
+			Hn->data[j * K + k] = H_jk + pow(beta,p) * d;
+			diff1_n = alpha_div_diff1_H(X, W, Hn, j, k, alpha);
+			if (diff1_n * d <= 0.0){
 				break;
-			m++;
+			}
+			p++;
 		}
+		free_matrix(Hn);
+		Hs_jk = H_jk + pow(beta,p) * d;
 	}
-
-	H_i_jk = H_jk - (H_n_jk - H_jk) / (diff1_n - diff1) * diff1;
-
-	if (d > 0.0 && m >= 1 && y < H_i_jk)
-		H_jk = H_i_jk;
-	else if (d < 0.0 && m >= 1 && y > H_i_jk)
-		H_jk = H_i_jk;
-	else
-		H_jk = y;
 	
-	// update H_jk
-	H_jk = fmax(eps,H_jk);
-
-	free_matrix(H_n);
-
-	return H_jk;
+	// Step 3
+	if (d > 0.0){
+		return fmax(Hs_jk, Hi_jk);
+	}else{
+		return fmax(eps,fmin(Hs_jk,Hi_jk));
+	}
 }
 
 void _proposed_update_W(Matrix *X, Matrix *W, Matrix *H, Matrix *W_new,int *flag,
