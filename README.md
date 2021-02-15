@@ -36,7 +36,51 @@ URL: https://github.com/Reference-LAPACK/lapack/archive/v3.9.0.tar.gz
 
 ### Install
 
-URL: https://gist.github.com/tsano430/b9ee96c39937876a576da62e7f917f96
+- Mac
+
+```bash
+#!/bin/bash
+
+# Bulid
+cp make.inc.example make.inc
+make blaslib
+make lapacklib
+make cblaslib
+make lapackelib
+
+# Copy the four static library files to "/usr/local/lib"
+sudo cp ./librefblas.a /usr/local/lib/libblas.a
+sudo cp ./liblapack.a /usr/local/lib/liblapack.a
+sudo cp ./libcblas.a /usr/local/lib/libcblas.a
+sudo cp ./liblapacke.a /usr/local/lib/liblapacke.a
+
+# Copy the include files to "/usr/local/include"
+sudo cp ./CBLAS/include/cblas*.h /usr/local/include/
+sudo cp ./LAPACKE/include/lapacke*.h /usr/local/include/
+```
+
+- Ubuntu
+
+```bash
+#!/bin/bash
+
+# Bulid
+cp make.inc.example make.inc
+make blaslib
+make lapacklib
+make cblaslib
+make lapackelib
+
+# Copy the four static library files to "/usr/lib"
+sudo cp ./librefblas.a /usr/lib/libblas.a
+sudo cp ./liblapack.a /usr/lib/liblapack.a
+sudo cp ./libcblas.a /usr/lib/libcblas.a
+sudo cp ./liblapacke.a /usr/lib/liblapacke.a
+
+# Copy the include files to "usr/include"
+sudo cp ./CBLAS/include/cblas*.h /usr/include/
+sudo cp ./LAPACKE/include/lapacke*.h /usr/include/
+```
 
 [1]: https://ieeexplore.ieee.org/document/9010306
 [2]: http://www.netlib.org/lapack/lapacke.html
